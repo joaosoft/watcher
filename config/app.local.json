@@ -7,12 +7,12 @@
       "extensions": [ "go", "json" ]
     },
     "log": {
-      "level": "error"
+      "level": "info"
     }
   },
   "manager": {
     "log": {
-      "level": "error"
+      "level": "info"
     }
   }
 }

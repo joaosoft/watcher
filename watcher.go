@@ -162,7 +162,6 @@ func (w *Watcher) Start(wg *sync.WaitGroup) error {
 func (w *Watcher) Stop(wg *sync.WaitGroup) error {
 	defer wg.Done()
 
-	w.quit <- 1
 	if err := w.pm.Stop(); err != nil {
 		return err
 	}
