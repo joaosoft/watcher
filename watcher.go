@@ -127,6 +127,7 @@ func (w *Watcher) execute() error {
 						w.quit <- 1
 					}
 
+					fmt.Println(changed)
 					if changed {
 						w.event <- &Event{
 							File:      dir,
@@ -240,7 +241,7 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 			File:      next,
 			Operation: OperationCreate,
 		}
-		changed = &Changed
+		*changed = Changed
 	} else {
 		if oldFileInfo.ModTime != fileInfo.ModTime() ||
 			oldFileInfo.Size != fileInfo.Size() {
@@ -250,7 +251,7 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 				File:      next,
 				Operation: OperationUpdate,
 			}
-			changed = &Changed
+			*changed = Changed
 		}
 	}
 
