@@ -42,8 +42,8 @@ import (
 )
 
 func main() {
-	quit := make(chan int)
 	c := make(chan *watcher.Event)
+	quit := make(chan int)
 
 	termChan := make(chan os.Signal, 1)
 	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
@@ -54,8 +54,7 @@ func main() {
 		for {
 			select {
 			case <-termChan:
-				return
-			case <-quit:
+				quit <- 1
 				return
 			case event := <-c:
 				fmt.Printf("received event %+v\n", event)
@@ -63,14 +62,14 @@ func main() {
 		}
 	}()
 
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	if err := w.Start(&wg); err != nil {
+	if err := w.Start(nil); err != nil {
 		panic(err)
 	}
 
 	<-termChan
-	quit <- 1
+	if err := w.Stop(nil); err != nil {
+		panic(err)
+	}
 }
 ```
 
