@@ -58,7 +58,7 @@
   branch = "master"
   name = "github.com/joaosoft/manager"
   packages = ["."]
-  revision = "df908b8170005c18f301cca03850cb95bf65ee30"
+  revision = "e659dde62b042b6c85ec3f404136c173ccdd946e"
 
 [[projects]]
   branch = "master"
@@ -196,7 +196,7 @@
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "1a700e749ce29638d0bbcb531cce1094ea096bd3"
+  revision = "4ea2f632f6e912459fe60b26b1749377f0d889d5"
 
 [[projects]]
   name = "golang.org/x/text"
