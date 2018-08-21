@@ -15,3 +15,5 @@ type Event struct {
 }
 
 type Operation string
+
+var Changed = true

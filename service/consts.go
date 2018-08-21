@@ -1,8 +1,8 @@
 package service
 
 const (
-	OperationCreate Operation = "create"
-	OperationUpdate Operation = "update"
-	OperationDelete Operation = "delete"
-	OperationMove   Operation = "move"
+	OperationCreate  Operation = "create"
+	OperationUpdate  Operation = "update"
+	OperationDelete  Operation = "delete"
+	OperationChanges Operation = "changes"
 )

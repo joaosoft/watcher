@@ -111,18 +111,26 @@ func (w *Watcher) execute() error {
 					w.logger.Info("received shutdown signal")
 					return
 				case <-time.After(w.reload):
+					changed := false
 					w.logger.Info("reloading data")
 
 					// copy before reload files
 					oldFiles := w.files[dir]
 					w.files[dir] = make(map[string]FileInfo)
 
-					if err = w.doLoad(oldFiles, dir, dir); err != nil {
+					if err = w.doLoad(oldFiles, dir, dir, &changed); err != nil {
 						w.quit <- 1
 					}
 
-					if err = w.doRemove(dir, oldFiles); err != nil {
+					if err = w.doRemove(dir, oldFiles, &changed); err != nil {
 						w.quit <- 1
+					}
+
+					if changed {
+						w.event <- &Event{
+							File:      dir,
+							Operation: OperationChanges,
+						}
 					}
 				}
 			}
@@ -153,7 +161,7 @@ func (w *Watcher) Stop() error {
 	return w.pm.Stop()
 }
 
-func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string) error {
+func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, changed *bool) error {
 	fileInfo, err := os.Stat(next)
 	if err != nil {
 		return err
@@ -182,7 +190,7 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string) 
 		}
 		for _, nextDir := range subDir {
 			w.logger.Debugf("loading files on subdirectory [%s]", nextDir)
-			w.doLoad(oldFiles, dir, nextDir)
+			w.doLoad(oldFiles, dir, nextDir, changed)
 		}
 		return nil
 	}
@@ -216,6 +224,7 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string) 
 			File:      next,
 			Operation: OperationCreate,
 		}
+		changed = &Changed
 	} else {
 		if oldFileInfo.ModTime != fileInfo.ModTime() ||
 			oldFileInfo.Size != fileInfo.Size() {
@@ -225,13 +234,14 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string) 
 				File:      next,
 				Operation: OperationUpdate,
 			}
+			changed = &Changed
 		}
 	}
 
 	return nil
 }
 
-func (w *Watcher) doRemove(dir string, oldFiles map[string]FileInfo) error {
+func (w *Watcher) doRemove(dir string, oldFiles map[string]FileInfo, changed *bool) error {
 
 	for fullName, _ := range oldFiles {
 		if _, ok := w.files[dir][fullName]; !ok {
@@ -241,6 +251,7 @@ func (w *Watcher) doRemove(dir string, oldFiles map[string]FileInfo) error {
 				File:      fullName,
 				Operation: OperationDelete,
 			}
+			changed = &Changed
 		}
 	}
 
