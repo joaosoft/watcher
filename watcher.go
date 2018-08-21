@@ -127,7 +127,6 @@ func (w *Watcher) execute() error {
 						w.quit <- 1
 					}
 
-					fmt.Println(changed)
 					if changed {
 						w.event <- &Event{
 							File:      dir,
@@ -268,7 +267,7 @@ func (w *Watcher) doRemove(dir string, oldFiles map[string]FileInfo, changed *bo
 				File:      fullName,
 				Operation: OperationDelete,
 			}
-			changed = &Changed
+			*changed = Changed
 		}
 	}
 
