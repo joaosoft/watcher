@@ -1,4 +1,4 @@
-package service
+package watcher
 
 const (
 	OperationCreate  Operation = "create"

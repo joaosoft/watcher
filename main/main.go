@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"watcher/service"
+	"watcher"
 )
 
 func main() {
-	c := make(chan *service.Event)
-	w, err := service.NewWatcher(service.WithEventChannel(c))
+	c := make(chan *watcher.Event)
+	w, err := watcher.NewWatcher(watcher.WithEventChannel(c))
 	if err != nil {
 		panic(err)
 	}
