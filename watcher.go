@@ -25,7 +25,7 @@ type Watcher struct {
 	pm            *manager.Manager
 	mux           sync.Mutex
 	logger        logger.ILogger
-	reload        time.Duration
+	reloadTime    int64
 	quit          chan int
 	event         chan *Event
 	started       bool
@@ -36,7 +36,7 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 		watch:      make([]string, 0),
 		excluded:   make([]string, 0),
 		extensions: make([]string, 0),
-		reload:     time.Duration(time.Second * 1),
+		reloadTime: 1,
 		files:      make(map[string]map[string]FileInfo),
 		pm:         manager.NewManager(manager.WithRunInBackground(true)),
 		logger:     logger.NewLogDefault("watcher", logger.InfoLevel),
@@ -62,7 +62,7 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 	watcher.config = &appConfig.Watcher
 
 	// loading each configuration
-	watcher.reload = watcher.config.Reload
+	watcher.reloadTime = watcher.config.ReloadTime
 	watcher.watch = append(watcher.watch, watcher.config.Dirs.Watch...)
 	watcher.excluded = append(watcher.excluded, watcher.config.Dirs.Excluded...)
 	watcher.extensions = append(watcher.extensions, watcher.config.Dirs.Extensions...)
@@ -111,11 +111,11 @@ func (w *Watcher) execute() error {
 				case <-w.quit:
 					w.logger.Info("received shutdown signal")
 					return
-				case <-time.After(w.reload):
+				case <-time.After(time.Duration(w.reloadTime) * time.Second):
 					changed := false
 					w.logger.Info("reloading data")
 
-					// copy before reload files
+					// copy before reloadTime files
 					oldFiles := w.files[dir]
 					w.files[dir] = make(map[string]FileInfo)
 
@@ -160,7 +160,6 @@ func (w *Watcher) Start(wg *sync.WaitGroup) error {
 
 // Stop ...
 func (w *Watcher) Stop(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
 
 	w.quit <- 1

@@ -3,8 +3,6 @@ package watcher
 import (
 	"fmt"
 
-	"time"
-
 	manager "github.com/joaosoft/manager"
 	"github.com/labstack/gommon/log"
 )
@@ -16,8 +14,8 @@ type AppConfig struct {
 
 // WatcherConfig ...
 type WatcherConfig struct {
-	Reload time.Duration `json:"reload"`
-	Dirs   struct {
+	ReloadTime int64 `json:"reload_time"`
+	Dirs       struct {
 		Watch      []string `json:"watch"`
 		Excluded   []string `json:"excluded"`
 		Extensions []string `json:"extensions"`
@@ -28,13 +26,13 @@ type WatcherConfig struct {
 }
 
 // NewConfig ...
-func NewConfig(reload time.Duration, watch []string, excluded []string, extensions []string) *WatcherConfig {
+func NewConfig(reload int64, watch []string, excluded []string, extensions []string) *WatcherConfig {
 	appConfig := &AppConfig{}
 	if _, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig); err != nil {
 		log.Error(err.Error())
 	}
 
-	appConfig.Watcher.Reload = reload
+	appConfig.Watcher.ReloadTime = reload
 	appConfig.Watcher.Dirs.Watch = watch
 	appConfig.Watcher.Dirs.Excluded = excluded
 	appConfig.Watcher.Dirs.Extensions = extensions

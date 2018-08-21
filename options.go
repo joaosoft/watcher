@@ -1,8 +1,6 @@
 package watcher
 
 import (
-	"time"
-
 	"github.com/joaosoft/logger"
 	"github.com/joaosoft/manager"
 )
@@ -54,9 +52,9 @@ func WithQuitChannel(quit chan int) WatcherOption {
 }
 
 // WithReloadTime ...
-func WithReloadTime(reloadTime time.Duration) WatcherOption {
+func WithReloadTime(reloadTime int64) WatcherOption {
 	return func(watcher *Watcher) {
-		watcher.reload = reloadTime
+		watcher.reloadTime = reloadTime
 	}
 }
 
