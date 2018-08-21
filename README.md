@@ -10,6 +10,12 @@ A simple cross-platform file watcher
 * Exclusions
 * Extensions
 
+## Events
+* OperationCreate, when added a new file
+* OperationUpdate, when updated an existing file
+* OperationDelete, when deleted a file
+* OperationChanges, all files loaded and has some of the previous events
+
 ## Dependecy Management 
 >### Dep
 
