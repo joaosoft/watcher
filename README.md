@@ -27,29 +27,44 @@ go get github.com/joaosoft/watcher
 This examples are available in the project at [watcher/main/main.go](https://github.com/joaosoft/watcher/tree/master/main/main.go)
 ```
 import (
-	github.com/joaosoft/watcher
 	"fmt"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+	github.com/joaosoft/watcher
 )
 
 func main() {
-	c := make(chan *service.Event)
-	w, err := service.NewWatcher(service.WithEventChannel(c))
-	if err != nil {
-		panic(err)
-	}
+	quit := make(chan int)
+	c := make(chan *watcher.Event)
+
+	termChan := make(chan os.Signal, 1)
+	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
+
+	w := watcher.NewWatcher(watcher.WithEventChannel(c), watcher.WithQuitChannel(quit))
 
 	go func() {
 		for {
 			select {
+			case <-termChan:
+				return
+			case <-quit:
+				return
 			case event := <-c:
 				fmt.Printf("received event %+v\n", event)
 			}
 		}
 	}()
 
-	if err := w.Start(); err != nil {
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	if err := w.Start(&wg); err != nil {
 		panic(err)
 	}
+
+	<-termChan
+	quit <- 1
 }
 ```
 
@@ -58,11 +73,11 @@ func main() {
 ```
 {
   "watcher": {
-    "host": "localhost:8001",
+    "reload_time": 1,
     "dirs": {
       "watch":[ "examples/" ],
       "excluded":[ "examples/test_2" ],
-      "extensions": [ "go" ]
+      "extensions": [ "go", "json" ]
     },
     "log": {
       "level": "error"
