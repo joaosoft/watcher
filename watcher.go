@@ -30,8 +30,8 @@ type Watcher struct {
 	event         chan *Event
 }
 
-func NewWatcher(options ...WatcherOption) (*Watcher, error) {
-	service := &Watcher{
+func NewWatcher(options ...WatcherOption) *Watcher {
+	watcher := &Watcher{
 		watch:      make([]string, 0),
 		excluded:   make([]string, 0),
 		extensions: make([]string, 0),
@@ -43,32 +43,32 @@ func NewWatcher(options ...WatcherOption) (*Watcher, error) {
 		quit:       make(chan int),
 	}
 
-	if service.isLogExternal {
-		service.pm.Reconfigure(manager.WithLogger(service.logger))
+	if watcher.isLogExternal {
+		watcher.pm.Reconfigure(manager.WithLogger(watcher.logger))
 	}
 
 	// load configuration File
 	appConfig := &AppConfig{}
 	if simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig); err != nil {
-		service.logger.Error(err.Error())
+		watcher.logger.Error(err.Error())
 	} else {
-		service.pm.AddConfig("config_app", simpleConfig)
+		watcher.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(appConfig.Watcher.Log.Level)
-		service.logger.Debugf("setting log level to %s", level)
-		service.logger.Reconfigure(logger.WithLevel(level))
+		watcher.logger.Debugf("setting log level to %s", level)
+		watcher.logger.Reconfigure(logger.WithLevel(level))
 	}
 
-	service.config = &appConfig.Watcher
+	watcher.config = &appConfig.Watcher
 
 	// loading each configuration
-	service.reload = service.config.Reload
-	service.watch = append(service.watch, service.config.Dirs.Watch...)
-	service.excluded = append(service.excluded, service.config.Dirs.Excluded...)
-	service.extensions = append(service.extensions, service.config.Dirs.Extensions...)
+	watcher.reload = watcher.config.Reload
+	watcher.watch = append(watcher.watch, watcher.config.Dirs.Watch...)
+	watcher.excluded = append(watcher.excluded, watcher.config.Dirs.Excluded...)
+	watcher.extensions = append(watcher.extensions, watcher.config.Dirs.Extensions...)
 
-	service.Reconfigure(options...)
+	watcher.Reconfigure(options...)
 
-	return service, nil
+	return watcher
 }
 
 func (w *Watcher) AddWatch(watchs ...string) *Watcher {

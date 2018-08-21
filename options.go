@@ -26,43 +26,43 @@ func WithConfiguration(config *WatcherConfig) WatcherOption {
 
 // WithLogger ...
 func WithLogger(logger logger.ILogger) WatcherOption {
-	return func(service *Watcher) {
-		service.logger = logger
-		service.isLogExternal = true
+	return func(watcher *Watcher) {
+		watcher.logger = logger
+		watcher.isLogExternal = true
 	}
 }
 
 // WithLogLevel ...
 func WithLogLevel(level logger.Level) WatcherOption {
-	return func(service *Watcher) {
-		service.logger.SetLevel(level)
+	return func(watcher *Watcher) {
+		watcher.logger.SetLevel(level)
 	}
 }
 
 // WithManager ...
 func WithManager(mgr *manager.Manager) WatcherOption {
-	return func(service *Watcher) {
-		service.pm = mgr
+	return func(watcher *Watcher) {
+		watcher.pm = mgr
 	}
 }
 
 // WithQuitChannel ...
 func WithQuitChannel(quit chan int) WatcherOption {
-	return func(service *Watcher) {
-		service.quit = quit
+	return func(watcher *Watcher) {
+		watcher.quit = quit
 	}
 }
 
 // WithReloadTime ...
 func WithReloadTime(reloadTime time.Duration) WatcherOption {
-	return func(service *Watcher) {
-		service.reload = reloadTime
+	return func(watcher *Watcher) {
+		watcher.reload = reloadTime
 	}
 }
 
 // WithEventChannel ...
 func WithEventChannel(event chan *Event) WatcherOption {
-	return func(service *Watcher) {
-		service.event = event
+	return func(watcher *Watcher) {
+		watcher.event = event
 	}
 }
