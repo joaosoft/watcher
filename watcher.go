@@ -143,7 +143,6 @@ func (w *Watcher) execute() error {
 
 // Start ...
 func (w *Watcher) Start(wg *sync.WaitGroup) error {
-	wg.Add(1)
 	defer wg.Done()
 
 	if err := w.pm.Start(); err != nil {

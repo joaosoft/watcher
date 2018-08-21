@@ -8,7 +8,7 @@ import (
 )
 
 // WatcherOption ...
-type WatcherOption func(client *Watcher)
+type WatcherOption func(watcher *Watcher)
 
 // Reconfigure ...
 func (w *Watcher) Reconfigure(options ...WatcherOption) {
@@ -19,8 +19,8 @@ func (w *Watcher) Reconfigure(options ...WatcherOption) {
 
 // WithConfiguration ...
 func WithConfiguration(config *WatcherConfig) WatcherOption {
-	return func(client *Watcher) {
-		client.config = config
+	return func(watcher *Watcher) {
+		watcher.config = config
 	}
 }
 
