@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"watcher"
 )
@@ -30,15 +29,12 @@ func main() {
 		}
 	}()
 
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	if err := w.Start(&wg); err != nil {
+	if err := w.Start(nil); err != nil {
 		panic(err)
 	}
 
 	<-termChan
-	wg.Add(1)
-	if err := w.Stop(&wg); err != nil {
+	if err := w.Stop(nil); err != nil {
 		panic(err)
 	}
 }
