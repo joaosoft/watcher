@@ -102,7 +102,6 @@ func (w *Watcher) execute() error {
 			return err
 		}
 
-		w.started = true
 		go func() {
 			for {
 				select {
@@ -152,19 +151,19 @@ func (w *Watcher) Start() error {
 		return err
 	}
 
+	w.started = true
+
 	return nil
 }
 
 // Stop ...
 func (w *Watcher) Stop() error {
-	defer func() {
-		w.started = false
-	}()
-
 	w.quit <- 1
 	if err := w.pm.Stop(); err != nil {
 		return err
 	}
+
+	w.started = false
 
 	return nil
 }
