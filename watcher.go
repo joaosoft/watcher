@@ -142,7 +142,10 @@ func (w *Watcher) execute() error {
 }
 
 // Start ...
-func (w *Watcher) Start() error {
+func (w *Watcher) Start(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	if err := w.pm.Start(); err != nil {
 		return err
 	}
@@ -157,7 +160,10 @@ func (w *Watcher) Start() error {
 }
 
 // Stop ...
-func (w *Watcher) Stop() error {
+func (w *Watcher) Stop(wg *sync.WaitGroup) error {
+	wg.Add(1)
+	defer wg.Done()
+
 	w.quit <- 1
 	if err := w.pm.Stop(); err != nil {
 		return err
