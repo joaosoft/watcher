@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"watcher"
 )
@@ -22,7 +23,7 @@ func main() {
 		}
 	}()
 
-	if err := w.Start(); err != nil {
+	if err := w.Start(&sync.WaitGroup{}); err != nil {
 		panic(err)
 	}
 
