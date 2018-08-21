@@ -4,7 +4,7 @@
     "dirs": {
       "watch":[ "examples/" ],
       "excluded":[ "examples/test_2" ],
-      "extensions": [ "go" ]
+      "extensions": [ "go", "json" ]
     },
     "log": {
       "level": "error"
