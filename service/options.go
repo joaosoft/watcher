@@ -56,7 +56,7 @@ func WithQuitChannel(quit chan int) WatcherOption {
 // WithReloadTime ...
 func WithReloadTime(reloadTime time.Duration) WatcherOption {
 	return func(service *Watcher) {
-		service.reloadTime = reloadTime
+		service.reload = reloadTime
 	}
 }
 

@@ -25,7 +25,7 @@ type Watcher struct {
 	pm            *manager.Manager
 	mux           sync.Mutex
 	logger        logger.ILogger
-	reloadTime    time.Duration
+	reload        time.Duration
 	quit          chan int
 	event         chan *Event
 }
@@ -35,7 +35,7 @@ func NewWatcher(options ...WatcherOption) (*Watcher, error) {
 		watch:      make([]string, 0),
 		excluded:   make([]string, 0),
 		extensions: make([]string, 0),
-		reloadTime: time.Duration(time.Second * 5),
+		reload:     time.Duration(time.Second * 5),
 		files:      make(map[string]map[string]FileInfo),
 		pm:         manager.NewManager(manager.WithRunInBackground(true)),
 		logger:     logger.NewLogDefault("watcher", logger.InfoLevel),
@@ -61,6 +61,7 @@ func NewWatcher(options ...WatcherOption) (*Watcher, error) {
 	service.config = &appConfig.Watcher
 
 	// loading each configuration
+	service.reload = service.config.Reload
 	service.watch = append(service.watch, service.config.Dirs.Watch...)
 	service.excluded = append(service.excluded, service.config.Dirs.Excluded...)
 	service.extensions = append(service.extensions, service.config.Dirs.Extensions...)
@@ -109,7 +110,7 @@ func (w *Watcher) execute() error {
 				case <-w.quit:
 					w.logger.Info("received shutdown signal")
 					return
-				case <-time.After(w.reloadTime):
+				case <-time.After(w.reload):
 					w.logger.Info("reloading data")
 
 					// copy before reload files

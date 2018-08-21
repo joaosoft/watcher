@@ -4,7 +4,8 @@
     "dirs": {
       "watch":[ "examples/" ],
       "excluded":[ "examples/test_2" ],
-      "extensions": [ "go", "json" ]
+      "extensions": [ "go", "json" ],
+      "reload": 1
     },
     "log": {
       "level": "error"
