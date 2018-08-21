@@ -28,6 +28,7 @@ type Watcher struct {
 	reload        time.Duration
 	quit          chan int
 	event         chan *Event
+	started       bool
 }
 
 func NewWatcher(options ...WatcherOption) *Watcher {
@@ -101,6 +102,7 @@ func (w *Watcher) execute() error {
 			return err
 		}
 
+		w.started = true
 		go func() {
 			for {
 				select {
@@ -137,8 +139,6 @@ func (w *Watcher) execute() error {
 		}()
 	}
 
-	<-termChan
-
 	return nil
 }
 
@@ -157,8 +157,21 @@ func (w *Watcher) Start() error {
 
 // Stop ...
 func (w *Watcher) Stop() error {
+	defer func() {
+		w.started = false
+	}()
+
 	w.quit <- 1
-	return w.pm.Stop()
+	if err := w.pm.Stop(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Started ...
+func (w *Watcher) Started() bool {
+	return w.started
 }
 
 func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, changed *bool) error {

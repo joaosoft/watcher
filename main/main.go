@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"watcher"
 )
 
 func main() {
+	quit := make(chan int)
 	c := make(chan *watcher.Event)
-	w, err := watcher.NewWatcher(watcher.WithEventChannel(c))
-	if err != nil {
-		panic(err)
-	}
+	w := watcher.NewWatcher(watcher.WithEventChannel(c), watcher.WithQuitChannel(quit))
 
 	go func() {
 		for {
@@ -24,4 +25,9 @@ func main() {
 	if err := w.Start(); err != nil {
 		panic(err)
 	}
+
+	termChan := make(chan os.Signal, 1)
+	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
+	<-termChan
+	quit <- 1
 }
