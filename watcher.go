@@ -182,7 +182,7 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 		return err
 	}
 
-	if strings.HasPrefix(fileInfo.Name(), ".") {
+	if fileInfo.Name() != "." && strings.HasPrefix(fileInfo.Name(), ".") {
 		return nil
 	}
 
