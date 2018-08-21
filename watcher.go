@@ -35,7 +35,7 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 		watch:      make([]string, 0),
 		excluded:   make([]string, 0),
 		extensions: make([]string, 0),
-		reload:     time.Duration(time.Second * 5),
+		reload:     time.Duration(time.Second * 1),
 		files:      make(map[string]map[string]FileInfo),
 		pm:         manager.NewManager(manager.WithRunInBackground(true)),
 		logger:     logger.NewLogDefault("watcher", logger.InfoLevel),
