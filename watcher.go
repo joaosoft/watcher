@@ -208,7 +208,7 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 			return err
 		}
 		for _, nextDir := range subDir {
-			w.logger.Debugf("loading files on subdirectory [%s]", nextDir)
+			w.logger.Debugf("loading subdirectory [%s]", nextDir)
 			w.doLoad(oldFiles, dir, nextDir, changed)
 		}
 		return nil
@@ -227,6 +227,8 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 			return nil
 		}
 	}
+
+	w.logger.Debugf("loading file [%s]", fileInfo.Name())
 
 	// if it is a file
 	w.files[dir][next] = FileInfo{
