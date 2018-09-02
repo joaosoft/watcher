@@ -112,6 +112,7 @@ func (w *Watcher) execute() error {
 					w.logger.Info("received shutdown signal")
 					return
 				case <-time.After(time.Duration(w.reloadTime) * time.Second):
+					w.mux.Lock()
 					changed := false
 					w.logger.Info("reloading data")
 
@@ -133,6 +134,7 @@ func (w *Watcher) execute() error {
 							Operation: OperationChanges,
 						}
 					}
+					w.mux.Unlock()
 				}
 			}
 		}()
