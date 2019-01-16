@@ -52,14 +52,14 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 	appConfig := &AppConfig{}
 	if simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig); err != nil {
 		watcher.logger.Error(err.Error())
-	} else {
+	} else if appConfig.Watcher != nil {
 		watcher.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(appConfig.Watcher.Log.Level)
 		watcher.logger.Debugf("setting log level to %s", level)
 		watcher.logger.Reconfigure(logger.WithLevel(level))
 	}
 
-	watcher.config = &appConfig.Watcher
+	watcher.config = appConfig.Watcher
 
 	// loading each configuration
 	watcher.reloadTime = watcher.config.ReloadTime

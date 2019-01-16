@@ -9,7 +9,7 @@ import (
 
 // AppConfig ...
 type AppConfig struct {
-	Watcher WatcherConfig `json:"watcher"`
+	Watcher *WatcherConfig `json:"watcher"`
 }
 
 // WatcherConfig ...
@@ -37,5 +37,5 @@ func NewConfig(reload int64, watch []string, excluded []string, extensions []str
 	appConfig.Watcher.Dirs.Excluded = excluded
 	appConfig.Watcher.Dirs.Extensions = extensions
 
-	return &appConfig.Watcher
+	return appConfig.Watcher
 }
