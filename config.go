@@ -26,16 +26,13 @@ type WatcherConfig struct {
 }
 
 // NewConfig ...
-func NewConfig(reload int64, watch []string, excluded []string, extensions []string) *WatcherConfig {
+func NewConfig() (*WatcherConfig, error) {
 	appConfig := &AppConfig{}
 	if _, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig); err != nil {
 		log.Error(err.Error())
+
+		return &WatcherConfig{}, err
 	}
 
-	appConfig.Watcher.ReloadTime = reload
-	appConfig.Watcher.Dirs.Watch = watch
-	appConfig.Watcher.Dirs.Excluded = excluded
-	appConfig.Watcher.Dirs.Extensions = extensions
-
-	return appConfig.Watcher
+	return appConfig.Watcher, nil
 }
