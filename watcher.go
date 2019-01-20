@@ -32,6 +32,7 @@ type Watcher struct {
 }
 
 func NewWatcher(options ...WatcherOption) *Watcher {
+	config, simpleConfig, err := NewConfig()
 	watcher := &Watcher{
 		watch:      make([]string, 0),
 		excluded:   make([]string, 0),
@@ -49,16 +50,13 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 		watcher.pm.Reconfigure(manager.WithLogger(watcher.logger))
 	}
 
-	// load configuration File
-	appConfig := &AppConfig{}
-	if simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig); err != nil {
-		watcher.logger.Error(err.Error())
-	} else if appConfig.Watcher != nil {
+	if err != nil {
+		logger.Error(err.Error())
+	} else {
 		watcher.pm.AddConfig("config_app", simpleConfig)
-		level, _ := logger.ParseLevel(appConfig.Watcher.Log.Level)
-		watcher.logger.Debugf("setting log level to %s", level)
-		watcher.logger.Reconfigure(logger.WithLevel(level))
-		watcher.config = appConfig.Watcher
+		level, _ := logger.ParseLevel(config.Watcher.Log.Level)
+		logger.Debugf("setting log level to %s", level)
+		logger.Reconfigure(logger.WithLevel(level))
 	}
 
 	// loading each configuration

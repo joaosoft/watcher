@@ -2,9 +2,7 @@ package watcher
 
 import (
 	"fmt"
-
-	manager "github.com/joaosoft/manager"
-	"github.com/labstack/gommon/log"
+	"github.com/joaosoft/manager"
 )
 
 // AppConfig ...
@@ -26,13 +24,9 @@ type WatcherConfig struct {
 }
 
 // NewConfig ...
-func NewConfig() (*WatcherConfig, error) {
+func NewConfig() (*AppConfig, manager.IConfig, error) {
 	appConfig := &AppConfig{}
-	if _, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig); err != nil {
-		log.Error(err.Error())
+	simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", GetEnv()), appConfig)
 
-		return &WatcherConfig{}, err
-	}
-
-	return appConfig.Watcher, nil
+	return appConfig, simpleConfig, err
 }
