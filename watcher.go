@@ -40,7 +40,7 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 		reloadTime: 1,
 		files:      make(map[string]map[string]FileInfo),
 		pm:         manager.NewManager(manager.WithRunInBackground(true)),
-		logger:     logger.NewLogDefault("watcher", logger.InfoLevel),
+		logger:     logger.NewLogDefault("watcher", logger.WarnLevel),
 		event:      make(chan *Event),
 		quit:       make(chan int),
 		config:     &WatcherConfig{},
