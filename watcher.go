@@ -52,18 +52,18 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 
 	if err != nil {
 		logger.Error(err.Error())
-	} else {
+	} else if config.Watcher != nil {
 		watcher.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(config.Watcher.Log.Level)
 		logger.Debugf("setting log level to %s", level)
 		logger.Reconfigure(logger.WithLevel(level))
-	}
 
-	// loading each configuration
-	watcher.reloadTime = watcher.config.ReloadTime
-	watcher.watch = append(watcher.watch, watcher.config.Dirs.Watch...)
-	watcher.excluded = append(watcher.excluded, watcher.config.Dirs.Excluded...)
-	watcher.extensions = append(watcher.extensions, watcher.config.Dirs.Extensions...)
+		// loading each configuration
+		watcher.reloadTime = watcher.config.ReloadTime
+		watcher.watch = append(watcher.watch, watcher.config.Dirs.Watch...)
+		watcher.excluded = append(watcher.excluded, watcher.config.Dirs.Excluded...)
+		watcher.extensions = append(watcher.extensions, watcher.config.Dirs.Extensions...)
+	}
 
 	watcher.Reconfigure(options...)
 
