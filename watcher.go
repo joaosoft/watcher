@@ -142,10 +142,17 @@ func (w *Watcher) execute() error {
 }
 
 // Start ...
-func (w *Watcher) Start(wg *sync.WaitGroup) error {
-	if wg != nil {
-		defer wg.Done()
+func (w *Watcher) Start(waitGroup ...*sync.WaitGroup) error {
+	var wg *sync.WaitGroup
+
+	if len(waitGroup) == 0 {
+		wg = &sync.WaitGroup{}
+		wg.Add(1)
+	} else {
+		wg = waitGroup[0]
 	}
+
+	defer wg.Done()
 
 	if err := w.pm.Start(); err != nil {
 		return err
@@ -161,10 +168,17 @@ func (w *Watcher) Start(wg *sync.WaitGroup) error {
 }
 
 // Stop ...
-func (w *Watcher) Stop(wg *sync.WaitGroup) error {
-	if wg != nil {
-		defer wg.Done()
+func (w *Watcher) Stop(waitGroup ...*sync.WaitGroup) error {
+	var wg *sync.WaitGroup
+
+	if len(waitGroup) == 0 {
+		wg = &sync.WaitGroup{}
+		wg.Add(1)
+	} else {
+		wg = waitGroup[0]
 	}
+
+	defer wg.Done()
 
 	if err := w.pm.Stop(); err != nil {
 		return err
