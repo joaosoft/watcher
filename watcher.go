@@ -43,7 +43,7 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 		logger:     logger.NewLogDefault("watcher", logger.WarnLevel),
 		event:      make(chan *Event),
 		quit:       make(chan int),
-		config:     &WatcherConfig{},
+		config:     config.Watcher,
 	}
 
 	if watcher.isLogExternal {
@@ -55,8 +55,8 @@ func NewWatcher(options ...WatcherOption) *Watcher {
 	} else if config.Watcher != nil {
 		watcher.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(config.Watcher.Log.Level)
-		logger.Debugf("setting log level to %s", level)
-		logger.Reconfigure(logger.WithLevel(level))
+		watcher.logger.Debugf("setting log level to %s", level)
+		watcher.logger.Reconfigure(logger.WithLevel(level))
 
 		// loading each configuration
 		watcher.reloadTime = watcher.config.ReloadTime

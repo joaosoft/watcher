@@ -29,12 +29,12 @@ func main() {
 		}
 	}()
 
-	if err := w.Start(nil); err != nil {
+	if err := w.Start(); err != nil {
 		panic(err)
 	}
 
 	<-termChan
-	if err := w.Stop(nil); err != nil {
+	if err := w.Stop(); err != nil {
 		panic(err)
 	}
 }

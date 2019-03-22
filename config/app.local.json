@@ -7,7 +7,7 @@
       "extensions": [ "go", "json" ]
     },
     "log": {
-      "level": "debug"
+      "level": "info"
     }
   },
   "manager": {
