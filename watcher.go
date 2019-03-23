@@ -93,6 +93,8 @@ func (w *Watcher) execute() error {
 	signal.Notify(termChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
 
 	// load
+	firstTime := true
+
 	for _, dir := range w.watch {
 
 		_, err := os.Stat(dir)
@@ -126,12 +128,14 @@ func (w *Watcher) execute() error {
 						w.quit <- 1
 					}
 
-					if changed {
+					if changed && !firstTime {
 						w.event <- &Event{
 							File:      dir,
 							Operation: OperationChanges,
 						}
 					}
+
+					firstTime = false
 					w.mux.Unlock()
 				}
 			}
@@ -214,8 +218,6 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 			}
 		}
 
-		w.logger.Debugf("loading files on directory [%s]", next)
-
 		subDir, err := filepath.Glob(fmt.Sprintf("%s/*", next))
 		if err != nil {
 			w.logger.Errorf("error reading directory %s", err)
@@ -242,8 +244,6 @@ func (w *Watcher) doLoad(oldFiles map[string]FileInfo, dir string, next string, 
 			return nil
 		}
 	}
-
-	w.logger.Debugf("loading file [%s]", fileInfo.Name())
 
 	// if it is a file
 	w.files[dir][next] = FileInfo{
