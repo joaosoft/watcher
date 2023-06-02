@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/joaosoft/watcher"
 	"os"
 	"os/signal"
 	"syscall"
-	"watcher"
 )
 
 func main() {
